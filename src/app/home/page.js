@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
-import { Send, Loader2, ArrowLeft } from "lucide-react"
+import { Send, Loader2, ArrowLeft, Copy, Check } from "lucide-react"
 import ReactMarkdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
@@ -14,13 +14,20 @@ export default function ConversationPage() {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [statusUpdates, setStatusUpdates] = useState([])
+  const [copiedCode, setCopiedCode] = useState('')
   const messagesEndRef = useRef(null)
   const textareaRef = useRef(null)
   const eventSourceRef = useRef(null)
 
   const scrollToBottom = () => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
 
-  useEffect(() => scrollToBottom(), [messages, statusUpdates])
+  useEffect(() => scrollToBottom(), [messages])
+
+  const copyToClipboard = async (text) => {
+    await navigator.clipboard.writeText(text)
+    setCopiedCode(text)
+    setTimeout(() => setCopiedCode(''), 2000)
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -139,107 +146,244 @@ export default function ConversationPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-black to-gray-900 text-white flex flex-col">
       {/* Header */}
       <motion.header
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="p-6 border-b border-white/10"
+        className="p-4 md:p-6 border-b border-white/10 backdrop-blur-sm bg-black/20 sticky top-0 z-10"
       >
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <Link href="/" className="text-gray-400 hover:text-white transition-colors">
+            <Link href="/" className="text-gray-400 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-lg">
               <ArrowLeft className="w-5 h-5" />
             </Link>
-            <h1 className="text-3xl font-extrabold">AlphaEvolve-lite</h1>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                AlphaEvolve-lite
+              </h1>
+              <p className="text-xs text-gray-400 mt-1">Flash + Pro Fusion Engine</p>
+            </div>
           </div>
-          <div className="text-sm text-gray-400 font-medium">
-            Flash + Pro Fusion Engine
+          <div className="hidden md:flex items-center space-x-2 bg-white/5 rounded-full px-4 py-2 border border-white/10">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <span className="text-sm text-gray-300">Online</span>
           </div>
         </div>
       </motion.header>
 
       {/* Main Content */}
       <div className="flex-1 overflow-hidden flex flex-col">
-        <div className="flex-1 overflow-y-auto px-6 py-8">
+        <div className="flex-1 overflow-y-auto px-4 md:px-6 py-6">
           <div className="max-w-6xl mx-auto">
             {messages.length === 0 && !isLoading ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="text-center py-24"
+                className="text-center py-16 md:py-24"
               >
-                <h2 className="text-4xl font-extrabold mb-6">Ready to evolve your prompts</h2>
-                <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
-                  Experience the power of dual <span className="text-white">Gemini model fusion</span>. 
-                  Fast iterations, deep analysis, cohesive results.
-                </p>
+                <div className="mb-8">
+                  <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-white/20 to-white/5 rounded-2xl flex items-center justify-center border border-white/10">
+                    <div className="w-8 h-8 bg-white rounded-lg"></div>
+                  </div>
+                  <h2 className="text-3xl md:text-4xl font-extrabold mb-4 bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
+                    Ready to evolve your prompts
+                  </h2>
+                  <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
+                    Experience the power of dual <span className="text-white font-semibold">Gemini model fusion</span>. 
+                    Fast iterations, deep analysis, cohesive results.
+                  </p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto mt-12">
+                  {[
+                    { title: "Lightning Fast", desc: "Flash model for rapid responses" },
+                    { title: "Deep Analysis", desc: "Pro model for complex reasoning" },
+                    { title: "Unified Output", desc: "Seamless fusion of both models" }
+                  ].map((feature, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 + idx * 0.1 }}
+                      className="p-6 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300"
+                    >
+                      <h3 className="font-semibold text-white mb-2">{feature.title}</h3>
+                      <p className="text-sm text-gray-400">{feature.desc}</p>
+                    </motion.div>
+                  ))}
+                </div>
               </motion.div>
             ) : (
-              <div className="space-y-8">
+              <div className="space-y-6 md:space-y-8">
                 <AnimatePresence>
                   {messages.map((message, index) => (
                     <motion.div
                       key={message.id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 }}
+                      transition={{ delay: index * 0.03 }}
                       className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
-                      <div className={`max-w-4xl ${message.role === 'user' ? 'text-right' : 'text-left'}`}>
-                        <div className={`rounded-2xl px-6 py-4 ${
-                          message.role === 'user' 
-                            ? 'bg-white text-black border border-white' 
-                            : 'bg-black border border-white/20'
-                        }`}>
-                          <div className="prose prose-invert max-w-none">
-                            <ReactMarkdown
-                              components={{
-                                code({ node, inline, className, children, ...props }) {
-                                  const match = /language-(\w+)/.exec(className || '')
-                                  return !inline && match ? (
-                                    <SyntaxHighlighter
-                                      style={oneDark}
-                                      language={match[1]}
-                                      PreTag="div"
-                                      className="rounded-lg !bg-gray-950 !mt-4 !mb-4"
-                                      {...props}
-                                    >
-                                      {String(children).replace(/\n$/, '')}
-                                    </SyntaxHighlighter>
-                                  ) : (
-                                    <code className={`px-2 py-1 rounded text-sm font-mono ${
-                                      message.role === 'user' ? 'bg-black/10 text-black' : 'bg-white/10 text-white'
-                                    }`} {...props}>
-                                      {children}
-                                    </code>
-                                  )
-                                },
-                                h1: ({ children }) => <h1 className={`text-2xl font-bold mb-4 ${
-                                  message.role === 'user' ? 'text-black' : 'text-white'
-                                }`}>{children}</h1>,
-                                h2: ({ children }) => <h2 className={`text-xl font-bold mb-3 ${
-                                  message.role === 'user' ? 'text-black' : 'text-white'
-                                }`}>{children}</h2>,
-                                h3: ({ children }) => <h3 className={`text-lg font-semibold mb-2 ${
-                                  message.role === 'user' ? 'text-black' : 'text-white'
-                                }`}>{children}</h3>,
-                                p: ({ children }) => <p className={`mb-4 leading-relaxed ${
-                                  message.role === 'user' ? 'text-black' : 'text-white'
-                                }`}>{children}</p>,
-                                ul: ({ children }) => <ul className="mb-4 space-y-2">{children}</ul>,
-                                li: ({ children }) => <li className={`leading-relaxed ${
-                                  message.role === 'user' ? 'text-black' : 'text-white'
-                                }`}>{children}</li>,
-                              }}
-                            >
-                              {message.content}
-                            </ReactMarkdown>
+                      <div className={`max-w-4xl w-full ${message.role === 'user' ? 'flex justify-end' : ''}`}>
+                        <div className={`group relative ${message.role === 'user' ? 'max-w-2xl' : 'w-full'}`}>
+                          {/* Role indicator */}
+                          <div className={`flex items-center gap-2 mb-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                            <div className={`flex items-center gap-2 text-xs font-medium ${
+                              message.role === 'user' ? 'text-gray-400' : 'text-gray-300'
+                            }`}>
+                              {message.role === 'user' ? (
+                                <>
+                                  <span>You</span>
+                                  <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                                    <span className="text-xs font-bold text-white">U</span>
+                                  </div>
+                                </>
+                              ) : (
+                                <>
+                                  <div className="w-6 h-6 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
+                                    <span className="text-xs font-bold text-white">A</span>
+                                  </div>
+                                  <span>AlphaEvolve-lite</span>
+                                </>
+                              )}
+                            </div>
                           </div>
-                          <div className={`text-xs mt-3 font-medium ${
-                            message.role === 'user' ? 'text-black/60' : 'text-white/60'
+
+                          {/* Message content */}
+                          <div className={`rounded-2xl px-6 py-5 shadow-lg transition-all duration-300 ${
+                            message.role === 'user' 
+                              ? 'bg-gradient-to-br from-blue-600 to-purple-700 text-white border border-blue-500/30 shadow-blue-500/20' 
+                              : 'bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm border border-white/10 hover:border-white/20 shadow-black/50'
                           }`}>
-                            {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            <div className={`prose prose-invert max-w-none ${message.role === 'user' ? 'prose-headings:text-white prose-p:text-white' : ''}`}>
+                              <ReactMarkdown
+                                components={{
+                                  code({ node, inline, className, children, ...props }) {
+                                    const match = /language-(\w+)/.exec(className || '')
+                                    const codeString = String(children).replace(/\n$/, '')
+                                    
+                                    return !inline && match ? (
+                                      <div className="relative group/code">
+                                        <div className="flex items-center justify-between bg-gray-900 px-4 py-2 rounded-t-lg border-b border-gray-700">
+                                          <span className="text-sm text-gray-400 font-medium">{match[1]}</span>
+                                          <Button
+                                            onClick={() => copyToClipboard(codeString)}
+                                            className="opacity-0 group-hover/code:opacity-100 transition-opacity p-1 h-auto bg-transparent hover:bg-gray-700 text-gray-400 hover:text-white"
+                                          >
+                                            {copiedCode === codeString ? (
+                                              <Check className="w-4 h-4" />
+                                            ) : (
+                                              <Copy className="w-4 h-4" />
+                                            )}
+                                          </Button>
+                                        </div>
+                                        <SyntaxHighlighter
+                                          style={oneDark}
+                                          language={match[1]}
+                                          PreTag="div"
+                                          className="!bg-gray-950 !mt-0 !mb-4 rounded-t-none !rounded-b-lg"
+                                          showLineNumbers={codeString.split('\n').length > 5}
+                                          {...props}
+                                        >
+                                          {codeString}
+                                        </SyntaxHighlighter>
+                                      </div>
+                                    ) : (
+                                      <code className={`px-2 py-1 rounded-md text-sm font-mono ${
+                                        message.role === 'user' 
+                                          ? 'bg-black/20 text-white border border-white/20' 
+                                          : 'bg-gray-800 text-green-400 border border-gray-600'
+                                      }`} {...props}>
+                                        {children}
+                                      </code>
+                                    )
+                                  },
+                                  h1: ({ children }) => (
+                                    <h1 className={`text-2xl font-bold mb-4 pb-2 border-b ${
+                                      message.role === 'user' ? 'text-white border-white/30' : 'text-white border-gray-600'
+                                    }`}>
+                                      {children}
+                                    </h1>
+                                  ),
+                                  h2: ({ children }) => (
+                                    <h2 className={`text-xl font-bold mb-3 ${
+                                      message.role === 'user' ? 'text-white' : 'text-gray-100'
+                                    }`}>
+                                      {children}
+                                    </h2>
+                                  ),
+                                  h3: ({ children }) => (
+                                    <h3 className={`text-lg font-semibold mb-2 ${
+                                      message.role === 'user' ? 'text-white' : 'text-gray-200'
+                                    }`}>
+                                      {children}
+                                    </h3>
+                                  ),
+                                  p: ({ children }) => (
+                                    <p className={`mb-4 leading-relaxed ${
+                                      message.role === 'user' ? 'text-white' : 'text-gray-300'
+                                    }`}>
+                                      {children}
+                                    </p>
+                                  ),
+                                  ul: ({ children }) => (
+                                    <ul className="mb-4 space-y-2 pl-4">{children}</ul>
+                                  ),
+                                  ol: ({ children }) => (
+                                    <ol className="mb-4 space-y-2 pl-4">{children}</ol>
+                                  ),
+                                  li: ({ children }) => (
+                                    <li className={`leading-relaxed ${
+                                      message.role === 'user' ? 'text-white' : 'text-gray-300'
+                                    } marker:text-gray-500`}>
+                                      {children}
+                                    </li>
+                                  ),
+                                  blockquote: ({ children }) => (
+                                    <blockquote className={`border-l-4 pl-4 italic my-4 ${
+                                      message.role === 'user' 
+                                        ? 'border-white/30 text-white/90' 
+                                        : 'border-gray-500 text-gray-400'
+                                    }`}>
+                                      {children}
+                                    </blockquote>
+                                  ),
+                                  table: ({ children }) => (
+                                    <div className="overflow-x-auto my-4">
+                                      <table className="min-w-full border border-gray-600 rounded-lg">
+                                        {children}
+                                      </table>
+                                    </div>
+                                  ),
+                                  th: ({ children }) => (
+                                    <th className="border border-gray-600 px-4 py-2 bg-gray-800 text-left font-semibold text-white">
+                                      {children}
+                                    </th>
+                                  ),
+                                  td: ({ children }) => (
+                                    <td className="border border-gray-600 px-4 py-2 text-gray-300">
+                                      {children}
+                                    </td>
+                                  ),
+                                }}
+                              >
+                                {message.content}
+                              </ReactMarkdown>
+                            </div>
+                            
+                            {/* Timestamp */}
+                            <div className={`text-xs mt-4 pt-2 border-t font-medium ${
+                              message.role === 'user' 
+                                ? 'text-white/70 border-white/20' 
+                                : 'text-gray-500 border-white/10'
+                            }`}>
+                              {message.timestamp.toLocaleTimeString([], { 
+                                hour: '2-digit', 
+                                minute: '2-digit',
+                                hour12: true 
+                              })}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -247,35 +391,72 @@ export default function ConversationPage() {
                   ))}
                 </AnimatePresence>
 
-                {/* Real-time Status Updates */}
+                {/* Enhanced Status Updates - No Scroll, Expansion Instead */}
                 {isLoading && (
                   <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
                     className="flex justify-start"
                   >
-                    <div className="bg-black border border-white/20 rounded-2xl px-6 py-4 max-w-2xl">
-                      <div className="flex items-center space-x-3 mb-3">
-                        <Loader2 className="w-5 h-5 text-white animate-spin" />
-                        <span className="text-sm font-semibold text-white">AlphaEvolve-lite Processing</span>
+                    <div className="w-full max-w-4xl">
+                      {/* Role indicator */}
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="flex items-center gap-2 text-xs font-medium text-gray-300">
+                          <div className="w-6 h-6 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
+                            <Loader2 className="w-3 h-3 text-white animate-spin" />
+                          </div>
+                          <span>AlphaEvolve-lite</span>
+                        </div>
                       </div>
-                      <div className="space-y-2 max-h-32 overflow-y-auto">
-                        {statusUpdates.map((status, idx) => (
-                          <motion.div
-                            key={idx}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: idx * 0.1 }}
-                            className={`text-sm flex items-center space-x-2 ${
-                              idx === statusUpdates.length - 1 ? 'text-white' : 'text-gray-400'
-                            }`}
-                          >
-                            <div className={`w-2 h-2 rounded-full ${
-                              idx === statusUpdates.length - 1 ? 'bg-white animate-pulse' : 'bg-gray-600'
-                            }`} />
-                            <span>{status}</span>
-                          </motion.div>
-                        ))}
+
+                      {/* Status content */}
+                      <div className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm border border-white/10 rounded-2xl px-6 py-5 shadow-lg">
+                        <div className="flex items-center space-x-3 mb-4">
+                          <div className="flex space-x-1">
+                            <div className="w-2 h-2 bg-green-400 rounded-full animate-bounce"></div>
+                            <div className="w-2 h-2 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                            <div className="w-2 h-2 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                          </div>
+                          <span className="text-sm font-semibold text-white">Processing with Fusion Engine</span>
+                        </div>
+                        
+                        {/* Status updates with expansion instead of scroll */}
+                        <AnimatePresence>
+                          <div className="space-y-3">
+                            {statusUpdates.map((status, idx) => (
+                              <motion.div
+                                key={idx}
+                                initial={{ opacity: 0, x: -20, height: 0 }}
+                                animate={{ opacity: 1, x: 0, height: 'auto' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                transition={{ 
+                                  duration: 0.3,
+                                  delay: idx * 0.05,
+                                  ease: "easeOut"
+                                }}
+                                className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-all duration-300 ${
+                                  idx === statusUpdates.length - 1 
+                                    ? 'bg-green-500/20 border border-green-500/30 text-green-300' 
+                                    : 'bg-gray-800/50 text-gray-400'
+                                }`}
+                              >
+                                <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                                  idx === statusUpdates.length - 1 
+                                    ? 'bg-green-400 animate-pulse' 
+                                    : 'bg-gray-600'
+                                }`} />
+                                <span className="text-sm font-medium">{status}</span>
+                                {idx === statusUpdates.length - 1 && (
+                                  <motion.div
+                                    animate={{ rotate: 360 }}
+                                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                                    className="w-4 h-4 border-2 border-green-400 border-t-transparent rounded-full"
+                                  />
+                                )}
+                              </motion.div>
+                            ))}
+                          </div>
+                        </AnimatePresence>
                       </div>
                     </div>
                   </motion.div>
@@ -286,22 +467,22 @@ export default function ConversationPage() {
           </div>
         </div>
 
-        {/* Input Area */}
+        {/* Enhanced Input Area */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="border-t border-white/10 p-6 bg-black"
+          className="border-t border-white/10 p-4 md:p-6 bg-black/20 backdrop-blur-sm"
         >
           <div className="max-w-6xl mx-auto">
             <div className="relative">
-              <div className="relative bg-black rounded-2xl border border-white/20 focus-within:border-white/40 transition-all duration-200">
+              <div className="relative bg-gradient-to-r from-gray-900/90 to-gray-800/90 backdrop-blur-sm rounded-2xl border border-white/20 focus-within:border-white/40 focus-within:shadow-lg focus-within:shadow-white/10 transition-all duration-300">
                 <textarea
                   ref={textareaRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Ask AlphaEvolve-lite anything..."
-                  className="w-full bg-transparent px-6 py-4 pr-16 text-white placeholder-gray-400 resize-none focus:outline-none text-lg"
+                  className="w-full bg-transparent px-6 py-4 pr-16 text-white placeholder-gray-400 resize-none focus:outline-none text-lg leading-relaxed"
                   style={{ minHeight: '60px', maxHeight: '120px' }}
                   disabled={isLoading}
                   rows={1}
@@ -309,7 +490,7 @@ export default function ConversationPage() {
                 <Button
                   onClick={handleSubmit}
                   disabled={!input.trim() || isLoading}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-white text-black hover:bg-gray-200 disabled:bg-gray-700 disabled:text-gray-500 rounded-full w-10 h-10 p-0 transition-all duration-200"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-white to-gray-200 text-black hover:from-gray-200 hover:to-gray-300 disabled:from-gray-700 disabled:to-gray-600 disabled:text-gray-400 rounded-full w-12 h-12 p-0 transition-all duration-300 shadow-lg hover:shadow-xl disabled:shadow-none"
                 >
                   {isLoading ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
@@ -318,8 +499,14 @@ export default function ConversationPage() {
                   )}
                 </Button>
               </div>
-              <div className="text-sm text-gray-400 mt-3 text-center font-medium">
-                Press <span className="text-white">Enter</span> to send, <span className="text-white">Shift+Enter</span> for new line
+              <div className="flex items-center justify-between text-sm text-gray-400 mt-3">
+                <span className="font-medium">
+                  Press <kbd className="px-2 py-1 bg-gray-800 rounded text-white text-xs">Enter</kbd> to send, 
+                  <kbd className="px-2 py-1 bg-gray-800 rounded text-white text-xs ml-1">Shift+Enter</kbd> for new line
+                </span>
+                <span className="text-xs">
+                  Powered by Gemini Fusion
+                </span>
               </div>
             </div>
           </div>
