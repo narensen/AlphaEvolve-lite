@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+**AlphaEvolve-lite** is a lightning-fast, LLM-powered engineering assistant that blends **Gemini 2.5 Flash** and **Gemini 2.5 Pro** to synthesize high-quality solutions from a few-shot prompt — all with a sleek, animated UI.
 
-## Getting Started
+🌐 **Live App**: [https://alpha-evolve-lite.vercel.app](https://alpha-evolve-lite.vercel.app)
+![Screenshot from 2025-06-30 21-33-47](https://github.com/user-attachments/assets/32b21413-a6b6-44e5-a509-29bc509f23c4)
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🧠 Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- ⚡ Combines Gemini Flash + Pro for optimal reasoning
+- 🧠 Few-shot context learning
+- 🎯 Syntax-highlighted output (Python, Markdown, etc.)
+- 🎨 Framer Motion-based animated UI
+- 🖼 Beautiful background gradient blobs
+- 🔥 Deployed on **Vercel** + **Render**
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠 Tech Stack
 
-## Learn More
+### Frontend (Next.js 14)
 
-To learn more about Next.js, take a look at the following resources:
+- ✅ Tailwind CSS (modern theming, custom gradients)
+- ✅ Framer Motion (smooth animations)
+- ✅ Syntax highlighting via `react-syntax-highlighter`
+- ✅ App Router + Client components
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Backend (FastAPI)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- 🧠 Gemini 2.5 API (Pro + Flash)
+- 🌐 POST endpoint: `/generate`
+- 🔒 .env for API key
+- 🌍 CORS-enabled
+- 🚀 Deployed on Render
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
