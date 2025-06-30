@@ -45,7 +45,7 @@ export default function ConversationPage() {
 
     try {
       // Use the streaming endpoint for real-time status updates
-      const response = await fetch("http://127.0.0.1:8000/generate-stream", {
+      const response = await fetch("https://ae-backend-kel6.onrender.com/generate-stream", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: userMessage.content })
