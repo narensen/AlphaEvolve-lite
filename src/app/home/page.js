@@ -165,10 +165,6 @@ export default function ConversationPage() {
               <p className="text-xs text-gray-400 mt-1">Flash + Pro Fusion Engine</p>
             </div>
           </div>
-          <div className="hidden md:flex items-center space-x-2 bg-white/5 rounded-full px-4 py-2 border border-white/10">
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            <span className="text-sm text-gray-300">Online</span>
-          </div>
         </div>
       </motion.header>
 
@@ -183,9 +179,6 @@ export default function ConversationPage() {
                 className="text-center py-16 md:py-24"
               >
                 <div className="mb-8">
-                  <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-white/20 to-white/5 rounded-2xl flex items-center justify-center border border-white/10">
-                    <div className="w-8 h-8 bg-white rounded-lg"></div>
-                  </div>
                   <h2 className="text-3xl md:text-4xl font-extrabold mb-4 bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
                     Ready to evolve your prompts
                   </h2>
@@ -240,10 +233,7 @@ export default function ConversationPage() {
                                   </div>
                                 </>
                               ) : (
-                                <>
-                                  <div className="w-6 h-6 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
-                                    <span className="text-xs font-bold text-white">A</span>
-                                  </div>
+                                <>                                 
                                   <span>AlphaEvolve-lite</span>
                                 </>
                               )}
