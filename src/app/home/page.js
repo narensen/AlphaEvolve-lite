@@ -467,23 +467,22 @@ export default function ConversationPage() {
           </div>
         </div>
 
-        {/* Enhanced Input Area */}
+        {/* Clean Input Area */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="border-t border-white/10 p-4 md:p-6 bg-black/20 backdrop-blur-sm"
+          className="border-t border-white/10 p-4 md:p-6"
         >
           <div className="max-w-6xl mx-auto">
             <div className="relative">
-              <div className="relative bg-gradient-to-r from-gray-900/90 to-gray-800/90 backdrop-blur-sm rounded-2xl border border-white/20 focus-within:border-white/40 focus-within:shadow-lg focus-within:shadow-white/10 transition-all duration-300">
+              <div className="relative rounded-2xl border border-white/20 focus-within:border-white/40 transition-all duration-300">
                 <textarea
                   ref={textareaRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Ask AlphaEvolve-lite anything..."
-                  className="w-full bg-transparent px-6 py-4 pr-16 text-white placeholder-gray-400 resize-none focus:outline-none text-lg leading-relaxed"
-                  style={{ minHeight: '60px', maxHeight: '120px' }}
+                  className="w-full bg-transparent px-6 py-4 pr-16 text-white placeholder-gray-400 focus:outline-none text-lg leading-relaxed resize-none overflow-hidden"
                   disabled={isLoading}
                   rows={1}
                 />
