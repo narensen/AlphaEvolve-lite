@@ -120,3 +120,27 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  @keyframes pulse-shadow {
+    0%, 100% {
+      box-shadow: 0 0 0 rgba(255, 255, 255, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+    }
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-pulse-shadow {
+    animation: pulse-shadow 2s ease-in-out infinite;
+  }
+}
